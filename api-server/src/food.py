@@ -4,7 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 
 #DB Connection
-conn = psycopg2.connect("dbname='foodsuggest' host='foodsuggest.co04tmhhaeuf.us-east-1.rds.amazonaws.com' user='postgres' password='postgres' port='5432'")
+conn = psycopg2.connect("dbname='xxxxxxxx' host='xxxxxxxx.xxxxxxxx.us-east-1.rds.amazonaws.com' user='xxxxxxxx' password='xxxxxxxx' port='5432'")
 
 def create(event, context):
     food = json.loads(event['body'])

@@ -3,10 +3,10 @@ import boto3
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-#DB Connection
-conn = psycopg2.connect("dbname='xxxxxxxx' host='xxxxxxxx.xxxxxxxx.us-east-1.rds.amazonaws.com' user='xxxxxxxx' password='xxxxxxxx' port='5432'")
 
 def create(event, context):
+    #DB Connection
+    conn = psycopg2.connect("dbname='foodsuggest' host='foodsuggest.co04tmhhaeuf.us-east-1.rds.amazonaws.com' user='postgres' password='postgres' port='5432'")
     food_category = json.loads(event['body'])
     name = food_category['name']
     parentCategoryId = food_category['parentCategoryId']
@@ -30,39 +30,41 @@ def create(event, context):
     return response
     
 def findAll(event, context):
+    #DB Connection
+    conn = psycopg2.connect("dbname='foodsuggest' host='foodsuggest.co04tmhhaeuf.us-east-1.rds.amazonaws.com' user='postgres' password='postgres' port='5432'")
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     psql = 'SELECT * FROM foodcategory'
     cursor.execute(psql)
     foodcategories = cursor.fetchall()
     cursor.close()
-    conn.close()
-    body = {
-        "foodcategories": foodcategories
-    }    
+    conn.close()   
     response = {
         "statusCode": 200,
-        "body": json.dumps(body)
+        "headers": { "Content-Type": "application/json" , "Access-Control-Allow-Origin": '*' },             
+        "body": json.dumps(foodcategories)
     }    
     return response   
     
 def findOne(event, context):
-    id = event['pathParameters']['Id'];
+    #DB Connection
+    conn = psycopg2.connect("dbname='foodsuggest' host='foodsuggest.co04tmhhaeuf.us-east-1.rds.amazonaws.com' user='postgres' password='postgres' port='5432'")
+    id = event['pathParameters']['Id']
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     psql = 'SELECT * FROM foodcategory WHERE id = %s'
     cursor.execute(psql, (id,))
     foodcategory = cursor.fetchone()
     cursor.close()
     conn.close()
-    body = {
-        "foodcategory": foodcategory
-    }    
     response = {
         "statusCode": 200,
-        "body": json.dumps(body)
+        "headers": { "Content-Type": "application/json" , "Access-Control-Allow-Origin": '*' },                
+        "body": json.dumps(foodcategory)
     }    
     return response
     
 def update(event, context):
+    #DB Connection
+    conn = psycopg2.connect("dbname='foodsuggest' host='foodsuggest.co04tmhhaeuf.us-east-1.rds.amazonaws.com' user='postgres' password='postgres' port='5432'")
     food_category = json.loads(event['body'])
     id = food_category['id']
     name = food_category['name']
@@ -84,6 +86,8 @@ def update(event, context):
     return response
     
 def delete(event, context):
+    #DB Connection
+    conn = psycopg2.connect("dbname='foodsuggest' host='foodsuggest.co04tmhhaeuf.us-east-1.rds.amazonaws.com' user='postgres' password='postgres' port='5432'")
     food_category = json.loads(event['body'])
     id = food_category['id']  
     cursor = conn.cursor()

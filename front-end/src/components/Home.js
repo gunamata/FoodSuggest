@@ -16,9 +16,11 @@ class Home extends Component {
         this.state = {
           diets: [],
           diseases: [],
+          foodCategories: [],
           foodSuggestions: [],
           selectedDietItems: [],
-          selectedDiseaseItems: []
+          selectedDiseaseItems: [],
+          selectedFoodCategories: []
         };
         this.getFoodSuggestion = this.getFoodSuggestion.bind(this);
     }
@@ -34,19 +36,25 @@ class Home extends Component {
         .then((data) => {  
           this.setState({ diseases: data })
         }))
+        .then(        fetch('https://crbuj19wyd.execute-api.us-east-1.amazonaws.com/dev/food-category')
+        .then(res => res.json())
+        .then((data) => {  
+          this.setState({ foodCategories: data })
+        }))        
         .catch(console.log)        
     }
 
     getFoodSuggestion() {
         let s = {
                     diets: this.state.selectedDietItems,
-                    diseases: this.state.selectedDiseaseItems
+                    diseases: this.state.selectedDiseaseItems,
+                    sensitivityCategories: this.state.selectedFoodCategories
                 }
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(s)
-        }; 
+        };
         let url = 'https://crbuj19wyd.execute-api.us-east-1.amazonaws.com/dev/foodsuggest'
         fetch(url,requestOptions)
         .then(res => res.json())
@@ -74,6 +82,15 @@ class Home extends Component {
         this.setState({ selectedDiseaseItems: selected })
     }    
 
+    onFoodCategorySelectionChange(e){
+        let selected=[];//will be selected option in select
+        let selected_opt=(e.target.selectedOptions);
+        for (let i = 0; i < selected_opt.length; i++){
+            selected.push(selected_opt.item(i).value)
+        }
+        this.setState({ selectedFoodCategories: selected })
+    }    
+
     render() {
         return (
             <div>
@@ -99,6 +116,16 @@ class Home extends Component {
                                 </Form.Control>
                             </Form.Group> 
                         </Col>
+                        <Col>
+                            <Form.Group controlId="homeForm.ControlFoodCategoriesList">
+                                <Form.Label>Select Sensitivities</Form.Label>
+                                <Form.Control onChange={this.onFoodCategorySelectionChange.bind(this)} as="select" multiple>
+                                    {this.state.foodCategories.map( (foodcategory) =>
+                                        <option key={foodcategory.id}>{foodcategory.name}</option>
+                                    )}                                 
+                                </Form.Control>
+                            </Form.Group> 
+                        </Col>                        
                     </Row>  
                     <Styles>
                         <Button variant="primary" size="lg" onClick={this.getFoodSuggestion} block>                        
